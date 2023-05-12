@@ -1,21 +1,34 @@
-from keyboard import press_and_release, write
-from os import getcwd
+import os
+import platform
+import subprocess
+import getpass
+
 from time import sleep
-from getpass import getuser
 
-user_name = getuser()
-current_dir = getcwd()
+def execute_commands(commands):
+    if platform.system() == "Windows":
+        # On Windows, use the "start" command to open a new terminal window
+        # and execute the commands inside it
+        subprocess.Popen(["start", "cmd", "/c"] + commands)
+    else:
+        # On non-Windows platforms, execute the commands directly in the current terminal
+        subprocess.Popen(commands, cwd=os.getcwd())
 
-press_and_release("left windows + r")
-sleep(0.2)
-write("cmd")
-press_and_release("enter")
-sleep(0.2)
+if __name__ == "__main__":
+    # Replace these commands with the ones you want to execute
+    commands = [
+        "cd ~/Desktop",
+        "ls -l",
+        "echo 'Done!'"
+    ]
 
-command = ["""cd C:\\Users\\{}\\Desktop""".format(user_name),]
-#change the command to your needs
+    # Get the current user name and home directory
+    user_name = getpass.getuser()
+    home_dir = os.path.expanduser("~")
 
-for cmd in command:
-      write(cmd)
-      press_and_release("enter")
-      
+    # Change the directory to the user's Desktop
+    desktop_dir = os.path.join(home_dir, "Desktop")
+    os.chdir(desktop_dir)
+
+    # Execute the commands in a new terminal window or in the current terminal
+    execute_commands(commands)
